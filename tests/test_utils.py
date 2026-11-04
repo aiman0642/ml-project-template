@@ -29,9 +29,9 @@ def test_metrics_perfect_prediction() -> None:
 
 def test_metrics_known_values() -> None:
     result = precision_recall_f1([1, 1, 0, 0], [1, 0, 1, 0])
-    assert result["precision"] == 0.9
-    assert result["recall"] == 0.9
-    assert result["f1"] == 0.9
+    assert result["precision"] == 0.5
+    assert result["recall"] == 0.5
+    assert result["f1"] == 0.5
 
 
 def test_metrics_no_positives_returns_zeros() -> None:
