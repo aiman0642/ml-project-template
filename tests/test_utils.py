@@ -42,3 +42,32 @@ def test_metrics_no_positives_returns_zeros() -> None:
 def test_metrics_length_mismatch_raises() -> None:
     with pytest.raises(ValueError):
         precision_recall_f1([1, 0], [1])
+
+
+@pytest.fixture
+def subjects() -> list[str]:
+    return [f"person_{i}" for i in range(20)]
+
+
+@pytest.mark.parametrize(
+    ("test_size", "expected_test_groups"),
+    [(0.1, 2), (0.25, 5), (0.5, 10)],
+)
+def test_split_sizes(
+    subjects: list[str], test_size: float, expected_test_groups: int
+) -> None:
+    train, test = group_train_test_split(subjects, test_size=test_size)
+    assert len(test) == expected_test_groups
+    assert len(train) == 20 - expected_test_groups
+
+
+@pytest.mark.parametrize(
+    ("y_true", "y_pred", "expected_f1"),
+    [
+        ([1, 1, 1, 1], [1, 1, 1, 1], 1.0),
+        ([1, 1, 0, 0], [0, 0, 1, 1], 0.0),
+        ([1, 0, 0, 0], [1, 1, 0, 0], pytest.approx(2 / 3)),
+    ],
+)
+def test_f1_cases(y_true: list[int], y_pred: list[int], expected_f1: float) -> None:
+    assert precision_recall_f1(y_true, y_pred)["f1"] == expected_f1
